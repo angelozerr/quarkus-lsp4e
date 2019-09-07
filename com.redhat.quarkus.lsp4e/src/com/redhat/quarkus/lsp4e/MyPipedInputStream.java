@@ -202,7 +202,7 @@ public class MyPipedInputStream extends InputStream {
      */
     protected synchronized void receive(int b) throws IOException {
         checkStateForReceive();
-        writeSide = Thread.currentThread();
+        // writeSide = Thread.currentThread();
         if (in == out)
             awaitSpace();
         if (in < 0) {
@@ -227,7 +227,7 @@ public class MyPipedInputStream extends InputStream {
      */
     synchronized void receive(byte b[], int off, int len)  throws IOException {
         checkStateForReceive();
-        //writeSide = Thread.currentThread();
+        // writeSide = Thread.currentThread();
         int bytesToTransfer = len;
         while (bytesToTransfer > 0) {
             if (in == out)
@@ -313,7 +313,7 @@ public class MyPipedInputStream extends InputStream {
             throw new IOException("Write end dead");
         }
 
-       readSide = Thread.currentThread();
+       // readSide = Thread.currentThread();
         int trials = 2;
         while (in < 0) {
             if (closedByWriter) {
@@ -328,8 +328,8 @@ public class MyPipedInputStream extends InputStream {
             try {
                 wait(1000);
             } catch (InterruptedException ex) {
-               throw new java.io.InterruptedIOException();
-            	//return -1;
+               //throw new java.io.InterruptedIOException();
+            	return -1;
             }
         }
         int ret = buffer[out++] & 0xFF;
