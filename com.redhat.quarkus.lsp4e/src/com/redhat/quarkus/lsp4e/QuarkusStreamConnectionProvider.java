@@ -27,8 +27,7 @@ public class QuarkusStreamConnectionProvider extends LocalStreamConnectionProvid
 	protected LocalServer launchServer(InputStream clientToServerStream, OutputStream serverToClientStream)
 			throws IOException {
 		JDTQuarkusLanguageServer server = new JDTQuarkusLanguageServer();
-		Launcher<LanguageClient> launcher = createServerLauncher(server, clientToServerStream, serverToClientStream,
-				Executors.newCachedThreadPool());
+		Launcher<LanguageClient> launcher = createServerLauncher(server, clientToServerStream, serverToClientStream);
 		server.setClient(launcher.getRemoteProxy());
 		Future<?> launchedFuture = launcher.startListening();
 
@@ -54,14 +53,18 @@ public class QuarkusStreamConnectionProvider extends LocalStreamConnectionProvid
 	 * @param wrapper         - a function for plugging in additional message
 	 *                        consumers
 	 */
-	public static Launcher<LanguageClient> createServerLauncher(LanguageServer server, InputStream in, OutputStream out,
-			ExecutorService executorService) {
+	public static Launcher<LanguageClient> createServerLauncher(LanguageServer server, InputStream in, OutputStream out) {
 		return new Builder<LanguageClient>().setLocalService(server).setRemoteInterface(QuarkusLanguageClient.class) // Set
 																														// client
 																														// as
 																														// Quarkus
 																														// language
 																														// client
-				.setInput(in).setOutput(out).setExecutorService(executorService).create();
+				.setInput(in).setOutput(out).create();
+	}
+	
+	@Override
+	public int hashCode() {
+		return 10;
 	}
 }

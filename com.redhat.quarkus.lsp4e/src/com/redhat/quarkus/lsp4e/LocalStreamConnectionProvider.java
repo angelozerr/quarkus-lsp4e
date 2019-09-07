@@ -26,10 +26,10 @@ public abstract class LocalStreamConnectionProvider implements StreamConnectionP
 	// Certainly nobody wants to internationalize error messages like this...
 	private static final String STOP_ERROR_MESSAGE = "Error while stopping the local LSP service."; //$NON-NLS-1$
 
-	private PipedOutputStream clientToServerStream;
-	private PipedInputStream serverToClientStream;
-	private PipedInputStream clientToServerStreamReverse;
-	private PipedOutputStream serverToClientStreamReverse;
+	private MyPipedOutputStream clientToServerStream;
+	private MyPipedInputStream serverToClientStream;
+	private MyPipedInputStream clientToServerStreamReverse;
+	private MyPipedOutputStream serverToClientStreamReverse;
 	private LocalServer localServer;
 
 	private final ILog log;
@@ -49,11 +49,18 @@ public abstract class LocalStreamConnectionProvider implements StreamConnectionP
 
 	@Override
 	public synchronized void start() throws IOException {
-		clientToServerStream = new PipedOutputStream();
-		serverToClientStream = new PipedInputStream(PIPE_BUFFER_SIZE);
-		clientToServerStreamReverse = new PipedInputStream(clientToServerStream, PIPE_BUFFER_SIZE);
-		serverToClientStreamReverse = new PipedOutputStream(serverToClientStream);
-		localServer = launchServer(clientToServerStreamReverse, serverToClientStreamReverse);
+		new Thread(() -> {
+			try {
+			clientToServerStream = new MyPipedOutputStream();
+			serverToClientStream = new MyPipedInputStream(PIPE_BUFFER_SIZE);
+			clientToServerStreamReverse = new MyPipedInputStream(clientToServerStream, PIPE_BUFFER_SIZE);
+			serverToClientStreamReverse = new MyPipedOutputStream(serverToClientStream);
+			localServer = launchServer(clientToServerStreamReverse, serverToClientStreamReverse);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
 	}
 
 	protected abstract LocalServer launchServer(InputStream clientToServerStream, OutputStream serverToClientStream)
