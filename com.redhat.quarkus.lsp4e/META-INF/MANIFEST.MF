@@ -16,10 +16,14 @@ Require-Bundle: org.eclipse.lsp4e,
  org.eclipse.ui.genericeditor,
  com.redhat.quarkus.jdt.core,
  org.eclipse.jdt.core,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.eclipse.lsp4j.jsonrpc,
+ org.eclipse.lsp4j,
+ com.google.gson
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: com.redhat.quarkus.lsp4e
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: lib/com.redhat.quarkus.ls-uber.jar,
- .
+Bundle-ClassPath: .,
+ server/com.redhat.quarkus.ls-uber.jar
 Bundle-Activator: com.redhat.quarkus.lsp4e.QuarkusPlugin
+Export-Package: com.redhat.quarkus.lsp4e

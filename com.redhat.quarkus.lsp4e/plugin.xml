@@ -25,12 +25,19 @@
    <extension
          point="org.eclipse.lsp4e.languageServer">
       <server
-            class="com.redhat.quarkus.lsp4e.QuarkusStreamConnectionProvider"
+            class="com.redhat.quarkus.lsp4e.QuarkusLanguageServer"
             id="com.redhat.quarkus.lsp4e"
-            label="Quarkus Language Server" >
+            label="Quarkus Language Server"
+            clientImpl="com.redhat.quarkus.lsp4e.QuarkusLanguageClient"
+            serverInterface="com.redhat.quarkus.ls.api.QuarkusLanguageServerAPI"
+            singleton="true" >
       </server>
       <contentTypeMapping
             contentType="com.redhat.quarkus.lsp4e"
+            id="com.redhat.quarkus.lsp4e">
+      </contentTypeMapping>
+      <contentTypeMapping
+            contentType="org.eclipse.jdt.core.javaSource"
             id="com.redhat.quarkus.lsp4e">
       </contentTypeMapping>
    </extension>
