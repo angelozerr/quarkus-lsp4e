@@ -21,18 +21,19 @@ import com.redhat.quarkus.ls.api.QuarkusLanguageServerAPI;
 public class QuarkusLanguageClient extends LanguageClientImpl implements QuarkusLanguageClientAPI {
 
 	private static IQuarkusPropertiesChangedListener SINGLETON_LISTENER;
-	
+
 	private IQuarkusPropertiesChangedListener listener = event -> {
 		((QuarkusLanguageServerAPI) getLanguageServer()).quarkusPropertiesChanged(event);
 	};
 
 	public QuarkusLanguageClient() {
 		// FIXME : how to remove the listener????
-		// The listener should be removed when language server is shutdown, how to manage that????
+		// The listener should be removed when language server is shutdown, how to
+		// manage that????
 		if (SINGLETON_LISTENER != null) {
 			QuarkusActivator.getDefault().removeQuarkusPropertiesChangedListener(SINGLETON_LISTENER);
 		}
-		SINGLETON_LISTENER = listener;		
+		SINGLETON_LISTENER = listener;
 		QuarkusActivator.getDefault().addQuarkusPropertiesChangedListener(listener);
 	}
 
@@ -52,9 +53,8 @@ public class QuarkusLanguageClient extends LanguageClientImpl implements Quarkus
 					throw new UnsupportedOperationException(
 							String.format("Cannot find IFile for '%s'", applicationPropertiesUri));
 				}
-				String projectName = file.getProject().getName();
 				QuarkusPropertiesScope scope = params.getScope();
-				return JDTQuarkusManager.getInstance().getQuarkusProjectInfo(projectName, scope,
+				return JDTQuarkusManager.getInstance().getQuarkusProjectInfo(file, scope,
 						DocumentationConverter.DEFAULT_CONVERTER, monitor);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
