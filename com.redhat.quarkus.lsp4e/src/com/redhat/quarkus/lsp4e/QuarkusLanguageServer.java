@@ -1,3 +1,12 @@
+/*******************************************************************************
+* Copyright (c) 2019 Red Hat Inc. and others.
+* All rights reserved. This program and the accompanying materials
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v20.html
+*
+* Contributors:
+*     Red Hat Inc. - initial API and implementation
+*******************************************************************************/
 package com.redhat.quarkus.lsp4e;
 
 import java.io.File;
@@ -16,6 +25,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.lsp4e.server.ProcessStreamConnectionProvider;
 
+/**
+ * Quarkus language server.
+ * 
+ * @author Angelo ZERR
+ *
+ */
 public class QuarkusLanguageServer extends ProcessStreamConnectionProvider {
 
 	public QuarkusLanguageServer() {
@@ -23,8 +38,7 @@ public class QuarkusLanguageServer extends ProcessStreamConnectionProvider {
 		commands.add(computeJavaPath());
 		commands.add("-classpath");
 		try {
-			URL url = FileLocator
-					.toFileURL(getClass().getResource("/server/com.redhat.quarkus.ls-uber.jar"));
+			URL url = FileLocator.toFileURL(getClass().getResource("/server/com.redhat.quarkus.ls-uber.jar"));
 			commands.add(new java.io.File(url.getPath()).getAbsolutePath());
 			commands.add("com.redhat.quarkus.ls.QuarkusServerLauncher");
 			setCommands(commands);

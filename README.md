@@ -4,6 +4,8 @@ Please note this POC should be integrated in JBoss Tools.
 
 Here a demo:
 
+![Quarkus LS In Eclipse](demos/QuarkusLSInEclipseDemo.gif)
+
 If you wish to play with this POC:
 
  * install LSP4E

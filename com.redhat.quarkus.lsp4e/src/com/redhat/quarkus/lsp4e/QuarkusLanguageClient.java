@@ -1,3 +1,12 @@
+/*******************************************************************************
+* Copyright (c) 2019 Red Hat Inc. and others.
+* All rights reserved. This program and the accompanying materials
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v20.html
+*
+* Contributors:
+*     Red Hat Inc. - initial API and implementation
+*******************************************************************************/
 package com.redhat.quarkus.lsp4e;
 
 import java.util.concurrent.CompletableFuture;
@@ -6,11 +15,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.lsp4e.LanguageClientImpl;
+import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures;
 
 import com.redhat.quarkus.commons.QuarkusProjectInfo;
 import com.redhat.quarkus.commons.QuarkusProjectInfoParams;
 import com.redhat.quarkus.commons.QuarkusPropertiesScope;
+import com.redhat.quarkus.commons.QuarkusPropertyDefinitionParams;
 import com.redhat.quarkus.jdt.core.DocumentationConverter;
 import com.redhat.quarkus.jdt.core.IQuarkusPropertiesChangedListener;
 import com.redhat.quarkus.jdt.core.JDTQuarkusManager;
@@ -18,6 +29,12 @@ import com.redhat.quarkus.jdt.core.QuarkusActivator;
 import com.redhat.quarkus.ls.api.QuarkusLanguageClientAPI;
 import com.redhat.quarkus.ls.api.QuarkusLanguageServerAPI;
 
+/**
+ * LSP4E Quarkus language client.
+ * 
+ * @author Angelo ZERR
+ *
+ */
 public class QuarkusLanguageClient extends LanguageClientImpl implements QuarkusLanguageClientAPI {
 
 	private static IQuarkusPropertiesChangedListener SINGLETON_LISTENER;
@@ -60,6 +77,13 @@ public class QuarkusLanguageClient extends LanguageClientImpl implements Quarkus
 				throw new RuntimeException(e);
 			}
 		});
+	}
+
+	@Override
+	public CompletableFuture<Location> getPropertyDefinition(QuarkusPropertyDefinitionParams params) {
+		// TODO : implements the Quarkus definition when LSP4E will support JDT LS
+		// syntax uri -> see // https://bugs.eclipse.org/bugs/show_bug.cgi?id=551625
+		return CompletableFuture.completedFuture(null);
 	}
 
 }
