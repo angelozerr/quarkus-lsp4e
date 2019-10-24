@@ -8,7 +8,7 @@
       <content-type
             base-type="org.eclipse.core.runtime.text"
             file-names="application.properties"
-            id="com.redhat.quarkus.lsp4e"
+            id="org.jboss.tools.quarkus.lsp4e"
             name="Application Properties"
             priority="normal">
       </content-type>
@@ -17,7 +17,7 @@
    <extension
          point="org.eclipse.ui.editors">
       <editorContentTypeBinding
-            contentTypeId="com.redhat.quarkus.lsp4e"
+            contentTypeId="org.jboss.tools.quarkus.lsp4e"
             editorId="org.eclipse.ui.genericeditor.GenericEditor">
       </editorContentTypeBinding>
    </extension>
@@ -25,20 +25,20 @@
    <extension
          point="org.eclipse.lsp4e.languageServer">
       <server
-            class="com.redhat.quarkus.lsp4e.QuarkusLanguageServer"
-            id="com.redhat.quarkus.lsp4e"
+            class="org.jboss.tools.quarkus.lsp4e.MicroProfileLanguageServer"
+            id="org.jboss.tools.quarkus.lsp4e"
             label="Quarkus Language Server"
-            clientImpl="com.redhat.quarkus.lsp4e.QuarkusLanguageClient"
-            serverInterface="com.redhat.quarkus.ls.api.QuarkusLanguageServerAPI"
+            clientImpl="org.jboss.tools.quarkus.lsp4e.MicroProfileLanguageClient"
+            serverInterface="com.redhat.microprofile.ls.api.MicroProfileLanguageServerAPI"
             singleton="true" >
       </server>
       <contentTypeMapping
-            contentType="com.redhat.quarkus.lsp4e"
-            id="com.redhat.quarkus.lsp4e">
+            contentType="org.jboss.tools.quarkus.lsp4e"
+            id="org.jboss.tools.quarkus.lsp4e">
       </contentTypeMapping>
       <contentTypeMapping
             contentType="org.eclipse.jdt.core.javaSource"
-            id="com.redhat.quarkus.lsp4e">
+            id="org.jboss.tools.quarkus.lsp4e">
       </contentTypeMapping>
    </extension>
    
@@ -49,7 +49,7 @@
             scopeName="properties">
       </grammar>
       <scopeNameContentTypeBinding
-            contentTypeId="com.redhat.quarkus.lsp4e"
+            contentTypeId="org.jboss.tools.quarkus.lsp4e"
             scopeName="properties">
       </scopeNameContentTypeBinding>
    </extension>
@@ -57,7 +57,7 @@
    <extension
          point="org.eclipse.tm4e.languageconfiguration.languageConfigurations">
       <languageConfiguration
-            contentTypeId="com.redhat.quarkus.lsp4e"
+            contentTypeId="org.jboss.tools.quarkus.lsp4e"
             path="language-configurations/language-configuration.json">
       </languageConfiguration>
    </extension>
