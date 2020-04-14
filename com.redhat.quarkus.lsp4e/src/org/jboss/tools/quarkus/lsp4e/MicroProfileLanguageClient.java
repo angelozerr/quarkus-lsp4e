@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.lsp4e.LanguageClientImpl;
+import org.eclipse.lsp4j.CodeAction;
 import org.eclipse.lsp4j.CodeLens;
 import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.PublishDiagnosticsParams;
@@ -27,13 +28,17 @@ import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures;
 import org.jboss.tools.quarkus.lsp4e.internal.JDTUtilsImpl;
 
+import com.redhat.microprofile.commons.MicroProfileJavaCodeActionParams;
 import com.redhat.microprofile.commons.MicroProfileJavaCodeLensParams;
 import com.redhat.microprofile.commons.MicroProfileJavaDiagnosticsParams;
+import com.redhat.microprofile.commons.MicroProfileJavaProjectLabelsParams;
 import com.redhat.microprofile.commons.MicroProfileProjectInfo;
 import com.redhat.microprofile.commons.MicroProfileProjectInfoParams;
 import com.redhat.microprofile.commons.MicroProfilePropertyDefinitionParams;
+import com.redhat.microprofile.commons.ProjectLabelInfoEntry;
 import com.redhat.microprofile.jdt.core.IMicroProfilePropertiesChangedListener;
 import com.redhat.microprofile.jdt.core.MicroProfileCorePlugin;
+import com.redhat.microprofile.jdt.core.ProjectLabelManager;
 import com.redhat.microprofile.jdt.core.PropertiesManager;
 import com.redhat.microprofile.jdt.core.PropertiesManagerForJava;
 import com.redhat.microprofile.ls.api.MicroProfileLanguageClientAPI;
@@ -58,10 +63,10 @@ public class MicroProfileLanguageClient extends LanguageClientImpl implements Mi
 		// The listener should be removed when language server is shutdown, how to
 		// manage that????
 		if (SINGLETON_LISTENER != null) {
-			MicroProfileCorePlugin.getDefault().removeQuarkusPropertiesChangedListener(SINGLETON_LISTENER);
+			MicroProfileCorePlugin.getDefault().removeMicroProfilePropertiesChangedListener(SINGLETON_LISTENER);
 		}
 		SINGLETON_LISTENER = listener;
-		MicroProfileCorePlugin.getDefault().addQuarkusPropertiesChangedListener(listener);
+		MicroProfileCorePlugin.getDefault().addMicroProfilePropertiesChangedListener(listener);
 	}
 
 	@Override
@@ -125,6 +130,30 @@ public class MicroProfileLanguageClient extends LanguageClientImpl implements Mi
 				MicroProfileLSPPlugin.logException(e.getLocalizedMessage(), e);
 				return Collections.emptyList();
 			}
+		});
+	}
+
+	@Override
+	public CompletableFuture<List<CodeAction>> getJavaCodeAction(MicroProfileJavaCodeActionParams javaParams) {
+		return CompletableFutures.computeAsync((cancelChecker) -> {
+			IProgressMonitor monitor = getProgressMonitor(cancelChecker);
+			try {
+				return (List<CodeAction>) PropertiesManagerForJava.getInstance().codeAction(javaParams,
+						JDTUtilsImpl.getInstance(), monitor);
+			} catch (JavaModelException e) {
+				MicroProfileLSPPlugin.logException(e.getLocalizedMessage(), e);
+				return Collections.emptyList();
+			}
+		});
+	}
+
+	@Override
+	public CompletableFuture<ProjectLabelInfoEntry> getJavaProjectlabels(
+			MicroProfileJavaProjectLabelsParams javaParams) {
+		return CompletableFutures.computeAsync((cancelChecker) -> {
+			IProgressMonitor monitor = getProgressMonitor(cancelChecker);
+			return ProjectLabelManager.getInstance().getProjectLabelInfo(javaParams, JDTUtilsImpl.getInstance(),
+					monitor);
 		});
 	}
 }
