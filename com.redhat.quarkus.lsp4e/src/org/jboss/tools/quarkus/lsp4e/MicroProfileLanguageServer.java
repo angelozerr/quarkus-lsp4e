@@ -40,11 +40,15 @@ public class MicroProfileLanguageServer extends ProcessStreamConnectionProvider 
 	public MicroProfileLanguageServer() {
 		List<String> commands = new ArrayList<>();
 		commands.add(computeJavaPath());
+		String debugPortString = "1234"; // +  System.getProperty(getClass().getName() + ".debugPort");
+		if (debugPortString != null) {
+			commands.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugPortString);
+		}
 		commands.add("-classpath");
 		try {
-			URL url = FileLocator.toFileURL(getClass().getResource("/server/com.redhat.microprofile.ls-uber.jar"));
+			URL url = FileLocator.toFileURL(getClass().getResource("/server/org.eclipse.lsp4mp.ls-uber.jar"));
 			commands.add(new java.io.File(url.getPath()).getAbsolutePath());
-			commands.add("com.redhat.microprofile.ls.MicroProfileServerLauncher");
+			commands.add("org.eclipse.lsp4mp.ls.MicroProfileServerLauncher");
 			setCommands(commands);
 			setWorkingDirectory(System.getProperty("user.dir"));
 		} catch (IOException e) {

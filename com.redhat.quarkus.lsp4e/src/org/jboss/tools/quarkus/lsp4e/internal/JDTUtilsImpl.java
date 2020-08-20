@@ -13,9 +13,8 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.Range;
-
-import com.redhat.microprofile.commons.DocumentFormat;
-import com.redhat.microprofile.jdt.core.utils.IJDTUtils;
+import org.eclipse.lsp4mp.commons.DocumentFormat;
+import org.eclipse.lsp4mp.jdt.core.utils.IJDTUtils;
 
 public class JDTUtilsImpl implements IJDTUtils {
 	private static final IJDTUtils INSTANCE = new JDTUtilsImpl();
@@ -70,8 +69,7 @@ public class JDTUtilsImpl implements IJDTUtils {
 
 	@Override
 	public int toOffset(IBuffer buffer, int line, int column) {
-		// TODO Auto-generated method stub
-		return 0;
+		return JsonRpcHelpers.toOffset(buffer, line, column);
 	}
 
 	@Override

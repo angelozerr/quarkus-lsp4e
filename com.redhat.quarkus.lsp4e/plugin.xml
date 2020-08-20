@@ -27,9 +27,9 @@
       <server
             class="org.jboss.tools.quarkus.lsp4e.MicroProfileLanguageServer"
             id="org.jboss.tools.quarkus.lsp4e"
-            label="Quarkus Language Server"
+            label="My Quarkus Language Server"
             clientImpl="org.jboss.tools.quarkus.lsp4e.MicroProfileLanguageClient"
-            serverInterface="com.redhat.microprofile.ls.api.MicroProfileLanguageServerAPI"
+            serverInterface="org.eclipse.lsp4mp.ls.api.MicroProfileLanguageServerAPI"
             singleton="true" >
       </server>
       <contentTypeMapping
@@ -42,7 +42,7 @@
       </contentTypeMapping>
    </extension>
    
-   <extension
+   <!--<extension
          point="org.eclipse.tm4e.registry.grammars">
       <grammar
             path="./syntaxes/java-properties.tmLanguage"
@@ -52,7 +52,7 @@
             contentTypeId="org.jboss.tools.quarkus.lsp4e"
             scopeName="properties">
       </scopeNameContentTypeBinding>
-   </extension>
+   </extension>-->
 
    <extension
          point="org.eclipse.tm4e.languageconfiguration.languageConfigurations">

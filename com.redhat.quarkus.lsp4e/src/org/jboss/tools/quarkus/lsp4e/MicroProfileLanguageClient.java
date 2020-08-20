@@ -22,27 +22,38 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.lsp4e.LanguageClientImpl;
 import org.eclipse.lsp4j.CodeAction;
 import org.eclipse.lsp4j.CodeLens;
+import org.eclipse.lsp4j.Hover;
 import org.eclipse.lsp4j.Location;
 import org.eclipse.lsp4j.PublishDiagnosticsParams;
+import org.eclipse.lsp4j.SymbolInformation;
 import org.eclipse.lsp4j.jsonrpc.CancelChecker;
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures;
+import org.eclipse.lsp4mp.commons.CodeActionResolveData;
+import org.eclipse.lsp4mp.commons.JavaCursorContextResult;
+import org.eclipse.lsp4mp.commons.JavaFileInfo;
+import org.eclipse.lsp4mp.commons.MicroProfileDefinition;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaCodeActionParams;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaCodeLensParams;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaCompletionParams;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaCompletionResult;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaDefinitionParams;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaDiagnosticsParams;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaFileInfoParams;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaHoverParams;
+import org.eclipse.lsp4mp.commons.MicroProfileJavaProjectLabelsParams;
+import org.eclipse.lsp4mp.commons.MicroProfileProjectInfo;
+import org.eclipse.lsp4mp.commons.MicroProfileProjectInfoParams;
+import org.eclipse.lsp4mp.commons.MicroProfilePropertyDefinitionParams;
+import org.eclipse.lsp4mp.commons.ProjectLabelInfoEntry;
+import org.eclipse.lsp4mp.commons.utils.JSONUtility;
+import org.eclipse.lsp4mp.jdt.core.IMicroProfilePropertiesChangedListener;
+import org.eclipse.lsp4mp.jdt.core.MicroProfileCorePlugin;
+import org.eclipse.lsp4mp.jdt.core.ProjectLabelManager;
+import org.eclipse.lsp4mp.jdt.core.PropertiesManager;
+import org.eclipse.lsp4mp.jdt.core.PropertiesManagerForJava;
+import org.eclipse.lsp4mp.ls.api.MicroProfileLanguageClientAPI;
+import org.eclipse.lsp4mp.ls.api.MicroProfileLanguageServerAPI;
 import org.jboss.tools.quarkus.lsp4e.internal.JDTUtilsImpl;
-
-import com.redhat.microprofile.commons.MicroProfileJavaCodeActionParams;
-import com.redhat.microprofile.commons.MicroProfileJavaCodeLensParams;
-import com.redhat.microprofile.commons.MicroProfileJavaDiagnosticsParams;
-import com.redhat.microprofile.commons.MicroProfileJavaProjectLabelsParams;
-import com.redhat.microprofile.commons.MicroProfileProjectInfo;
-import com.redhat.microprofile.commons.MicroProfileProjectInfoParams;
-import com.redhat.microprofile.commons.MicroProfilePropertyDefinitionParams;
-import com.redhat.microprofile.commons.ProjectLabelInfoEntry;
-import com.redhat.microprofile.jdt.core.IMicroProfilePropertiesChangedListener;
-import com.redhat.microprofile.jdt.core.MicroProfileCorePlugin;
-import com.redhat.microprofile.jdt.core.ProjectLabelManager;
-import com.redhat.microprofile.jdt.core.PropertiesManager;
-import com.redhat.microprofile.jdt.core.PropertiesManagerForJava;
-import com.redhat.microprofile.ls.api.MicroProfileLanguageClientAPI;
-import com.redhat.microprofile.ls.api.MicroProfileLanguageServerAPI;
 
 /**
  * LSP4E MicroProfile language client.
@@ -148,12 +159,82 @@ public class MicroProfileLanguageClient extends LanguageClientImpl implements Mi
 	}
 
 	@Override
-	public CompletableFuture<ProjectLabelInfoEntry> getJavaProjectlabels(
+	public CompletableFuture<JavaFileInfo> getJavaFileInfo(MicroProfileJavaFileInfoParams javaParams) {
+		return CompletableFutures.computeAsync((cancelChecker) -> {
+			IProgressMonitor monitor = getProgressMonitor(cancelChecker);
+			return PropertiesManagerForJava.getInstance().fileInfo(javaParams, JDTUtilsImpl.getInstance(), monitor);
+		});
+	}
+
+	@Override
+	public CompletableFuture<Hover> getJavaHover(MicroProfileJavaHoverParams javaParams) {
+		return CompletableFutures.computeAsync((cancelChecker) -> {
+			IProgressMonitor monitor = getProgressMonitor(cancelChecker);
+			try {
+				return PropertiesManagerForJava.getInstance().hover(javaParams, JDTUtilsImpl.getInstance(), monitor);
+			} catch (JavaModelException e) {
+				MicroProfileLSPPlugin.logException(e.getLocalizedMessage(), e);
+				return null;
+			}
+		});
+	}
+
+	@Override
+	public CompletableFuture<List<ProjectLabelInfoEntry>> getAllJavaProjectLabels() {
+		// TODO Auto-generated method stub
+		return MicroProfileLanguageClientAPI.super.getAllJavaProjectLabels();
+	}
+
+	@Override
+	public CompletableFuture<MicroProfileJavaCompletionResult> getJavaCompletion(
+			MicroProfileJavaCompletionParams javaParams) {
+		// TODO Auto-generated method stub
+		return MicroProfileLanguageClientAPI.super.getJavaCompletion(javaParams);
+	}
+
+	@Override
+	public CompletableFuture<JavaCursorContextResult> getJavaCursorContext(MicroProfileJavaCompletionParams context) {
+		// TODO Auto-generated method stub
+		return MicroProfileLanguageClientAPI.super.getJavaCursorContext(context);
+	}
+
+	@Override
+	public CompletableFuture<List<MicroProfileDefinition>> getJavaDefinition(
+			MicroProfileJavaDefinitionParams javaParams) {
+		// TODO Auto-generated method stub
+		return MicroProfileLanguageClientAPI.super.getJavaDefinition(javaParams);
+	}
+
+	@Override
+	public CompletableFuture<ProjectLabelInfoEntry> getJavaProjectLabels(
 			MicroProfileJavaProjectLabelsParams javaParams) {
 		return CompletableFutures.computeAsync((cancelChecker) -> {
 			IProgressMonitor monitor = getProgressMonitor(cancelChecker);
 			return ProjectLabelManager.getInstance().getProjectLabelInfo(javaParams, JDTUtilsImpl.getInstance(),
 					monitor);
+		});
+	}
+
+	@Override
+	public CompletableFuture<List<SymbolInformation>> getJavaWorkspaceSymbols(String projectUri) {
+		// TODO Auto-generated method stub
+		return MicroProfileLanguageClientAPI.super.getJavaWorkspaceSymbols(projectUri);
+	}
+
+	@Override
+	public CompletableFuture<CodeAction> resolveCodeAction(CodeAction unresolved) {
+		return CompletableFutures.computeAsync((cancelChecker) -> {
+			try {
+				IProgressMonitor monitor = getProgressMonitor(cancelChecker);
+				// Deserialize CodeAction#data which is a JSonObject to CodeActionResolveData
+				CodeActionResolveData resolveData = JSONUtility.toModel(unresolved.getData(), CodeActionResolveData.class);
+				unresolved.setData(resolveData);
+				return PropertiesManagerForJava.getInstance().resolveCodeAction(unresolved, JDTUtilsImpl.getInstance(),
+						monitor);
+			} catch (JavaModelException e) {
+				MicroProfileLSPPlugin.logException(e.getLocalizedMessage(), e);
+				return null;
+			}
 		});
 	}
 }
