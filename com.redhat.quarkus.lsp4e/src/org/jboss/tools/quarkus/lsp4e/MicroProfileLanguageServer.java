@@ -40,7 +40,7 @@ public class MicroProfileLanguageServer extends ProcessStreamConnectionProvider 
 	public MicroProfileLanguageServer() {
 		List<String> commands = new ArrayList<>();
 		commands.add(computeJavaPath());
-		String debugPortString = "1234"; // +  System.getProperty(getClass().getName() + ".debugPort");
+		String debugPortString = System.getProperty(getClass().getName() + ".debugPort");
 		if (debugPortString != null) {
 			commands.add("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=" + debugPortString);
 		}
